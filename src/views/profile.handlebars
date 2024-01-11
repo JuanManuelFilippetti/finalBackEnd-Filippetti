@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{__dirname}}/style.css">
+    <title>Tu perfil</title>
+        <script>
+        setTimeout(function () {
+            window.location.href = '/api/views/products';
+        }, 5000); 
+    </script>
+</head>
+<body>
+<div>
+    <h1>Bienvenid@ a tu perfil!</h1>
+    <p>Hola:{{user.name}}{{user.username}}</p>
+    <p>{{user.email}}</p>
+    <p>{{user.age}}</p>
+    <p>En unos segundos verás el listado de productos!</p>
+
+    <a href="/api/session/logout"><button>Cerrar sesión</button></a>
+    </div>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+</body>
+</html>

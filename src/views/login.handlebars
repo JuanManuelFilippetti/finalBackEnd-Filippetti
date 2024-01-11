@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{__dirname}}/style.css">
+    <title>Login de usuarios</title> 
+</head>
+<body> 
+<div>
+<div>
+    <h1>Ingresá a tu cuenta!</h1>
+    <form id="loginForm">
+        <label>Email</label>
+        <input name="email">
+        <br>
+        <label>Contraseña</label>
+        <input name="password" type="password">
+        <input type="submit">
+    </form>
+    <a href="/api/session/github"><button>Ingresá con Github</button></a>
+    <p>No estás resgistrado? <a href="/register">Regístrate aquí</a></p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/login.js"></script>
+</body>
+</html>

@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{__dirname}}/style.css">
+  <title>Productos</title>
+</head>
+<body>
+  <h1>Listado de Productos</h1>
+  <a href="/"><button>Home</button></a>
+ 
+    <div>
+        <h2>BIENVENIDO</h2>
+        <p>Hola! {{user.name}} {{user.username}}</p>
+        <p>Email: {{user.email}}</p>
+        <p>Edad: {{user.age}}</p>
+        <p>ROL: {{user.role}}</p>
+        <p>CART ID: {{user.cart}}</p>
+    </div>
+
+<ul>
+  {{#each products.docs}}
+    <li>
+      <h2>Nombre producto: {{title}}</h2>
+      <p>Precio: {{price}}</p>
+      <p>Categoría: {{category}}</p>
+      <button class="view-details-button" data-product-id={{_id}}>Ver detalle</button>  
+      <button class="add-to-cart-button" onclick="createCartAndAddProduct('{{_id}}')">Agregar al carrito</button>
+
+
+    </li>
+  {{/each}}
+</ul>
+
+<div>
+    {{#if totalPages}}
+       <p>Página {{page}} de {{totalPages}}</p>
+       {{#if prevLink}}
+         <a href={{prevLink}}>Página anterior</a>
+       {{/if}}
+       {{#if nextLink}}
+         <a href={{nextLink}}>Página siguiente</a>
+       {{/if}}
+    {{/if}}
+
+</div>
+
+
+<script>
+  function viewDetails(productId) {
+    window.location.href = `/api/views/products/${productId}`;
+  }
+
+  async function createCartAndAddProduct(productId) {
+    try {
+      const response = await fetch('/api/carts', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      if (response.ok) {
+        const data = await response.json();
+        const cartId = data.cart._id; 
+        if (cartId) {
+          addToCart(productId, cartId);
+        } else {
+          throw new Error('Carrito no encontrado');
+        }
+      } else {
+        throw new Error('No se pudo crear el carrito');
+      }
+    } catch (error) {
+      console.error('No se pudo crear el carrito:', error);
+    }
+  }
+
+  function addToCart(productId, cartId) {
+    fetch(`/api/carts/${cartId}/product/${productId}`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ quantity: 1 }), 
+    })
+      .then(function(response) {
+        return response.json();
+      })
+      .then(function(cart) {
+        console.log('Producto agregado al carrito', cart);
+      })
+      .catch(function(error) {
+        console.error('Error al agregar producto al carrito', error);
+      });
+  }
+</script>
+
+<a href="/api/session/logout"><button>Cerrar sesión</button></a>
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/products.js"></script>
+</body>
+</html>

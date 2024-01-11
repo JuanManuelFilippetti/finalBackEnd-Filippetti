@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <link rel="stylesheet" href="{{__dirname}}/style.css">
+    <title>Registrate</title>
+</head>
+<body>
+<div>
+        <h1>Registro</h1>
+        <form id="registerForm">
+            <label>Nombre:</label>
+            <input name="first_name">
+            <label>Apellido:</label>
+            <input name="last_name">
+            <label>Email:</label>
+            <input name="email">
+            <label>Edad:</label>
+            <input name="age">
+            <label>Contraseña:</label>
+            <input type="password" name="password">
+
+            <input type="submit">
+
+        </form>
+        <p>¿Ya tienes una cuenta? <a href="/login">Ingrese aquí</a></p>
+    </div>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/register.js"></script>
+</body>
+</html>

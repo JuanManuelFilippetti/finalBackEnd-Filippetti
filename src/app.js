@@ -1,65 +1,218 @@
-import express from 'express'
-import usersManager from './UserManager.js'
+import express from 'express';
+import { MongoProductManager } from './DATA/DAOs/productsMongo.dao.js';
+import productsRouter from '../src/routes/products.router.js'; // Importamos el router de productos
+import cartsRouter from '../src/routes/carts.router.js';
+import crypto from 'crypto';
+import { __dirname } from './bcrypt-helper.js'//Importamos Utils
+import handlebars from 'express-handlebars'//Importamos handlebars
+import viewsRouter from './routes/views.router.js' //Importamos viewsRouter
+import { Server } from 'socket.io' //Importamos socket
+import './DATA/mongoDB/dbConfig.js';
+import { Message } from './DATA/mongoDB/models/messages.models.js';
+import sessionRouter from '../src/routes/sessions.router.js'; //Importamos router de sesiones
+import cookieParser from 'cookie-parser'; //Importamos cookie parse
+import passport from 'passport'; //Importamos Passport
+import './services/passport/passportStrategies.js'
+import { isUser } from './middlewares/auth.middlewares.js'
+import session from 'express-session';
+import FileStore  from 'session-file-store';
+import MongoStore from 'connect-mongo';
+import config from './config.js';
+import mailsRouter from '../src/routes/mails.router.js'
+import { generateFakeProducts } from './mocks/productsMock.js';
+import logger from './winston.js';
+import { transporter } from './nodemailer.js';
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerUiExpress from "swagger-ui-express";
+import userModel from './DATA/mongoDB/models/user.model.js';
+import userRouter from '../src/routes/users.router.js'
+import mongoose from 'mongoose';
 
-const app = express()
+const fileStorage = FileStore(session);
 
-app.use(express.json())
-app.use(express.urlencoded({ extended: true }))
+const app = express();
 
-// rutas
-//get 
-app.get('/api/users', async (req, res) => {
-  try {
-    const users = await usersManager.getUsers()
-    res.status(200).json({ message: 'Users', users })
-  } catch (error) {
-    res.status(500).json({ error })
+mongoose.connect('mongodb+srv://JuanManuelFilippetti:Mongodb333@cluster0.zyjymia.mongodb.net/bd?retryWrites=true&w=majority');
+
+app.use(cookieParser());
+app.use(session({
+  store:MongoStore.create({
+    mongoUrl: 'mongodb+srv://JuanManuelFilippetti:Mongodb333@cluster0.zyjymia.mongodb.net/bd?retryWrites=true&w=majority',
+    mongoOptions: {useNewUrlParser: true, useUnifiedTopology: true},
+    ttl:50000,
+  }),
+  secret : 'qwerty123456',
+  resave: false,
+  saveUninitialized: false
+}));
+
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(express.static(__dirname + '/public'));
+
+app.use(passport.initialize());
+app.use(passport.session());
+
+app.engine('handlebars', handlebars.engine())
+app.set('views', __dirname + '/views')
+app.set('view engine', 'handlebars')
+
+app.use('/api/views', viewsRouter)
+app.use('/api/views/delete/:id', viewsRouter)
+
+const productManagerInstance = new MongoProductManager();
+
+app.get('/loggerTest', (req, res) => {
+  logger.debug('Probando debug');
+  logger.http('Probando http');
+  logger.info('Probando info');
+  logger.warning('Probando warning');
+  logger.error('Probando error');
+  logger.fatal('Probando fatal');
+  res.send('Endpoint /loggerTest');
+});
+
+app.get('/generarError', (req, res) => {
+  throw new Error('Error de prueba');
+});
+
+app.get('/', (req, res) => {
+  res.send('¡Bienvenidos!');
+});
+
+app.use('/api/products', productsRouter);
+app.use ('/api/views/products', productsRouter);
+
+app.get('/api/mockingproducts', (req, res) => {
+  const fakeProducts = [];
+  for (let i = 0; i < 100; i++) {
+      const productMock = generateFakeProducts(); 
+      fakeProducts.push(productMock);
   }
-})
+  res.json(fakeProducts);
+});
 
-app.get('/api/users/:idUser', async (req, res) => {
-  const { idUser } = req.params
+
+app.use('/api/carts', cartsRouter);
+
+app.get('/chat', isUser, (req, res) => {
+  res.render('chat', { messages: [] }); 
+});
+
+app.use("/api/session", sessionRouter);
+app.use("/api/session/current", sessionRouter);
+app.use("/api/session/users/premium", sessionRouter);
+
+app.use("/api/users", userRouter);
+app.use("/api/users/delete" , userRouter);
+app.use("/api/users/deleteInactive" , userRouter);
+
+
+app.get('/api/views/admin/users', async (req, res) => {
   try {
-    const user = await usersManager.getUserById(+idUser)
-    res.status(200).json({ message: 'User', user })
+    const users = await userModel.find({}, 'first_name last_name email role');
+    res.render('adminViews', { users }); 
   } catch (error) {
-    res.status(500).json({ error })
+    res.status(500).json({ error: error.message });
   }
+});
+
+
+app.use('/api/mail', mailsRouter);
+
+
+app.get('/api/views/forgot-pwd', (req, res) => {
+  res.render('forgotPwd');
+});
+
+app.get('/api/views/forgot-pwd-sent', (req, res) => {
+  res.render('forgotPwdSent');
+});
+
+app.get('/api/views/reset-pwd-ok', (req, res) => {
+  res.render('resetPwdOk');
+});
+
+app.get('/api/views/reset-pwd-expired', (req, res) => {
+  res.render('resetPwdExpired');
+});
+
+app.post('/api/forgot-pwd', async (req, res) => {
+  const { email } = req.body;
+  const token = crypto.randomBytes(20).toString('hex');
+  const expirationTime = Date.now() + 3600000; 
+  global.passwordResetToken = { email, token, expirationTime };
+  const resetURL = `http://localhost:8080/api/views/reset-pwd/${token}`;
+  await transporter.sendMail({
+    from: config.gmail_user,
+    to: email,
+    subject: 'Solicitud de recupero Contraseña',
+    html: `Clickea <a href="${resetURL}">aquí</a> para recuperar tu contraseña.`,
+  });
+  res.redirect('/api/views/forgot-pwd-sent');
+});
+
+
+app.get('/login', (req, res) => {
+  res.render('login'); 
+});
+
+app.get('/register', (req, res) => {
+  res.render('register'); 
+});
+
+app.get('/profile', (req, res) => {
+  res.render('profile', {
+    user: req.session.user,
+  }); 
+});
+
+
+const swaggerOptions = {
+  definition: {
+    openapi: "3.0.1",
+    info: {
+      title: "Documentación de LD ECOMMERCE",
+      description: "Infomación de métodos/funcionalidades aplicados en LD ECOMMERCE",
+    },
+  },
+  apis: [`${__dirname}/docs/**/*.yaml`],  
+};
+const specs = swaggerJSDoc(swaggerOptions);
+
+app.use("/api/docs", swaggerUiExpress.serve, swaggerUiExpress.setup(specs));
+
+const PORT = config.port||8080
+const httpServer = app.listen(PORT, () => {
+  console.log(`Escuchando al puerto ${PORT}`)
 })
 
-//post
-app.post('/api/users',async(req,res)=>{
-    console.log(req.body);
-    try {
-        const newUser = await usersManager.createUser(req.body)
-        res.status(200).json({ message: 'User created', user: newUser })
-    } catch (error) {
-        res.status(500).json({ error })
-    }
-})
+const socketServer = new Server(httpServer);
+socketServer.on('connection', (socket) => {
+  console.log('Cliente conectado', socket.id);
+  socket.on('disconnect', () => {
+    console.log(`Cliente desconectado`);
+  });
 
-// delete
-app.delete('/api/users/:idUser',async(req,res)=>{
-    const {idUser} = req.params
-try {
-    const response = await usersManager.deleteUser(+idUser)
-    res.status(200).json({message:'User deleted'})
-} catch (error) {
-    res.status(500).json({ error })
-}
-})
+  socket.on('addProduct', (newProduct) => {
+    const addedProduct = productManagerInstance.addProduct(newProduct);
+    socketServer.emit('addProduct', addedProduct); 
+  });
 
-// update
-app.put('/api/users/:idUser',async(req,res)=>{
-    const {idUser} = req.params
-    try {
-        const userUpdated = await usersManager.updateUser(+idUser,req.body)
-        res.status(200).json({message: 'User updated'})
-    } catch (error) {
-        res.status(500).json({ error })
-    }
-})
+  socket.on('deleteProduct', (productId) => {
+    productManagerInstance.deleteProduct(Number(productId));
+    socketServer.emit('productDeleted', productId); 
+    socketServer.emit('updateProductList'); 
+  });
 
-app.listen(8080, () => {
-  console.log('Escuchando al puerto 8080')
-})
+  socket.on('chatMessage', async (messageData) => {
+    const { user, message } = messageData;
+    const newMessage = new Message({ user, message });
+    await newMessage.save();
+
+    socketServer.emit('chatMessage', { user, message });
+
+    console.log(`Mensaje guardado en la base de datos: ${user}: ${message}`);
+  });
+  
+});

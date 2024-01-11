@@ -1,0 +1,21 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <link rel="stylesheet" href="{{__dirname}}/style.css">
+  <title>Carrito</title>
+</head>
+<body>
+  <h1>Carrito de Compras</h1>
+  <ul>
+    {{#each products.docs}}
+      <li>
+        <h2>{{title}}</h2>
+        <p>Precio: {{price}}</p>
+        <p>Cantidad: {{quantity}}</p>
+      </li>
+    {{/each}}
+  </ul>
+</body>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/index.js"></script>
+</html>
