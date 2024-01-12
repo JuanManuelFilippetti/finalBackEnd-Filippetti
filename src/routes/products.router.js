@@ -20,9 +20,9 @@ function getFieldType(fieldName) {
 }
 
 router.post('/', isAdmin, (req, res) => {
-  const { title, description, code, price, stock, category, thumbnails } = req.body;
+  const { title, description, price, stock, code, category, thumbnails } = req.body;
 
-  const requiredFields = ['title', 'description', 'code', 'price', 'stock', 'category', 'thumbnails'];
+  const requiredFields = ['title', 'description', 'price', 'stock', 'code', 'category', 'thumbnails'];
   const missingFields = requiredFields.filter(field => !(field in req.body));
 
   if (missingFields.length > 0) {
@@ -37,10 +37,10 @@ router.post('/', isAdmin, (req, res) => {
   const product = {
     title,
     description,
-    code,
     price,
-    status: true,
     stock: stock,
+    code,    
+    status: true,    
     category,
     thumbnails: thumbnails ? thumbnails.split(',') : [],
   };
@@ -58,7 +58,7 @@ router.post('/', isAdmin, (req, res) => {
 
 router.get('/', async (req, res) => {
   try {
-    const { limit = 100, page = 1, query, sort } = req.query;
+    const { limit = 50, page = 1, query, sort } = req.query;
 
     let queryOptions = {};
     if (query) {

@@ -1,6 +1,6 @@
 body {
     font-family: Arial, sans-serif;
-    background-color: #f7e4e8;
+    background-color: yellow;
     color: #333;
   }
   
@@ -20,55 +20,55 @@ body {
   }
   
   ul#productList li {
-    border-bottom: 1px solid #e87aa4;
-    padding: 10px;
+    border-bottom: 1px solid #5c5e06;
+    padding: 20px;
   }
   
   form {
     display: flex;
     flex-direction: column;
     align-items: center;
-    margin-bottom: 20px;
+    margin-bottom: 10px;
   }
   
   form label {
     display: block;
-    color: #e87aa4;
-    margin-bottom: 5px;
+    color: yellow;
+    margin-bottom: 10px;
   }
   
   form input {
-    width: 200px;
-    padding: 5px;
+    width: 100px;
+    padding: 15px;
     margin-bottom: 10px;
   }
   
   .card {
-    border: 1px solid #e87aa4;
-    padding: 10px;
-    margin-bottom: 20px;
+    border: 1px solid yellow;
+    padding: 15px;
+    margin-bottom: 10px;
   }
   
   .card label {
     display: block;
-    color: #e87aa4;
-    margin-bottom: 5px;
+    color: yellow;
+    margin-bottom: 10px;
   }
   
   .card input {
-    width: 40%;
-    padding: 5px;
+    width: 50%;
+    padding: 10px;
     margin-bottom: 10px;
   }
   
   form button {
-    background-color: #e87aa4;
+    background-color: yellow;
     color: #454545;
-    padding: 10px 20px;
+    padding: 20px 30px;
     border: none;
     cursor: pointer;
   }
   
   form button:hover {
-    background-color: #d05376;
+    background-color: yellow;
   }

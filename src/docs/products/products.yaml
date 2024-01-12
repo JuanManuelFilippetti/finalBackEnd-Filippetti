@@ -93,12 +93,12 @@ paths:
             application/json:
               example: {
                 "_id":"64e9220b68adf4f30a8af768",
-                "title":"Royal Canin Siamese",
-                "description":"Alimento adaptado a la fisiología de los gatos siameses",
+                "title":"Obrador de 2 x 2 metros con piso de chapa",
+                "description":"Obrador para guardar herramientas y materiales de obra",
                 "code":"RCSIAMESE000",
-                "price":45670,
-                "stock":379,
-                "category":"Alimentos",
+                "price":45500,
+                "stock":15,
+                "category":"Obrador",
                 "thumbnails":[],
                 "__v":0
               }

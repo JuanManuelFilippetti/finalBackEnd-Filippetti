@@ -1,6 +1,5 @@
 const socketClient = io();
 
-// Envío de mensajes desde el form
 document.getElementById('messageForm').addEventListener('submit', (event) => {
   event.preventDefault();
   const user = document.getElementById('user').value;
@@ -9,7 +8,6 @@ document.getElementById('messageForm').addEventListener('submit', (event) => {
   document.getElementById('message').value = '';
 });
 
-// Muestra los mensajes al cliente
 socketClient.on('chatMessage', (messageData) => {
   const messages = document.getElementById('messages');
   const newMessage = document.createElement('li');
