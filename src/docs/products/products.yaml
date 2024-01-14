@@ -19,12 +19,12 @@ paths:
                 type: string
               description:
                 type: string
-              code:
-                type: string
               price:
                 type: number
               stock:
                 type: number
+              code:
+                type: string           
               category:
                 type: string
               thumbnails:
