@@ -1,10 +1,10 @@
 import { Router } from "express";
 import { MongoProductManager } from '../DATA/DAOs/productsMongo.dao.js';
-import { isAdmin} from '../middlewares/auth.middlewares.js'
+import { isAdmin} from '../middlewares/auth.middlewares.js'; 
 import CustomError from "../errors/customErrors.js";
 import { ErrorMessages } from "../errors/errorNum.js";
 import { Product } from '../DATA/mongoDB/models/products.model.js';
-import logger from '../winston.js'
+import logger from '../winston.js';
 
 
 const router = Router();

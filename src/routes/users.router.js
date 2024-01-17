@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import userModel from '../DATA/mongoDB/models/user.model.js'
+import userModel from '../DATA/mongoDB/models/user.model.js';
 import { transporter } from "../nodemailer.js";
 
 

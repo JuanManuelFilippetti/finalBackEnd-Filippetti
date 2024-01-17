@@ -1,6 +1,6 @@
 import { Router } from 'express';
-import userModel from '../DATA/mongoDB/models/user.model.js'
-import cartModel from '../DATA/mongoDB/models/carts.model.js'
+import userModel from '../DATA/mongoDB/models/user.model.js';
+import cartModel from '../DATA/mongoDB/models/carts.model.js';
 import passport from 'passport';
 import bcrypt from 'bcrypt';
 import config from '../config.js';

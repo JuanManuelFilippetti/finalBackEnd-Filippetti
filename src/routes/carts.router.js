@@ -1,15 +1,13 @@
 import { Router } from 'express';
 import { MongoCartManager } from '../DATA/DAOs/cartsMongo.dao.js';
 import { isUser } from '../middlewares/auth.middlewares.js';
-import { cartService} from '../services/carts.service.js'
-import { productService} from '../services/product.service.js'
+import { cartService} from '../services/carts.service.js';
+import { productService} from '../services/product.service.js';
 import { ticketService } from '../services/ticket.service.js';
 import { generateUniqueCode } from '../utils/codeGenerator.js';
 import { ErrorMessages } from '../errors/errorNum.js';
 import CustomError from '../errors/customErrors.js';
 import logger from '../winston.js';
-
-
 
 
 const router = Router();

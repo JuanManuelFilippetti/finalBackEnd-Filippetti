@@ -1,31 +1,31 @@
-import express from 'express';
+import express from 'express'; 
 import { MongoProductManager } from './DATA/DAOs/productsMongo.dao.js';
-import productsRouter from '../src/routes/products.router.js'; // Importamos el router de productos
-import cartsRouter from '../src/routes/carts.router.js';
+import productsRouter from './routes/products.router.js';
+import cartsRouter from './routes/carts.router.js';
 import crypto from 'crypto';
-import { __dirname } from './bcrypt-helper.js'//Importamos Utils
-import handlebars from 'express-handlebars'//Importamos handlebars
-import viewsRouter from './routes/views.router.js' //Importamos viewsRouter
-import { Server } from 'socket.io' //Importamos socket
+import { __dirname } from './bcrypt-helper.js';
+import handlebars from 'express-handlebars';
+import viewsRouter from './routes/views.router.js';
+import { Server } from 'socket.io';
 import './DATA/mongoDB/dbConfig.js';
 import { Message } from './DATA/mongoDB/models/messages.models.js';
-import sessionRouter from '../src/routes/sessions.router.js'; //Importamos router de sesiones
-import cookieParser from 'cookie-parser'; //Importamos cookie parse
-import passport from 'passport'; //Importamos Passport
+import sessionRouter from './routes/sessions.router.js';
+import cookieParser from 'cookie-parser';
+import passport from 'passport';
 import './services/passport/passportStrategies.js'
 import { isUser } from './middlewares/auth.middlewares.js'
 import session from 'express-session';
 import FileStore  from 'session-file-store';
 import MongoStore from 'connect-mongo';
 import config from './config.js';
-import mailsRouter from '../src/routes/mails.router.js'
+import mailsRouter from './routes/mails.router.js';
 import { generateFakeProducts } from './mocks/productsMock.js';
 import logger from './winston.js';
 import { transporter } from './nodemailer.js';
 import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
 import userModel from './DATA/mongoDB/models/user.model.js';
-import userRouter from '../src/routes/users.router.js'
+import userRouter from './routes/users.router.js';
 import mongoose from 'mongoose';
 
 const fileStorage = FileStore(session);
