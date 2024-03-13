@@ -1,4 +1,4 @@
-import express from 'express'; 
+import express from 'express';     
 import { MongoProductManager } from './DATA/DAOs/productsMongo.dao.js';
 import productsRouter from './routes/products.router.js';
 import cartsRouter from './routes/carts.router.js';
