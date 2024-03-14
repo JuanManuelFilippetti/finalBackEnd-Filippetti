@@ -41,6 +41,21 @@ router.delete('/deleteInactive', async (req, res) => {
   }
 });
   
+
+router.post('/', async (req, res) => {
+  const { first_name, last_name, email, password } = req.body
+  if (!first_name || !last_name || !email || !password) {
+    return res.status(400).json({ message: 'Faltan algunos datos'})    
+  }
+  try {
+    const newUser = await usersMongo.createOne(req.body)
+    res.status(200).json({ message: 'Usuario creado', user: newUser })
+  } catch (error) {
+    res.status(500).json({ error })
+  }
+})
+
+
 router.delete('/delete/:uid', async (req, res) => {
     const userId = req.params.uid;
     try {
