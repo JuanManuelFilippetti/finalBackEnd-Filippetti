@@ -26,6 +26,7 @@ import swaggerJSDoc from "swagger-jsdoc";
 import swaggerUiExpress from "swagger-ui-express";
 import userModel from './DATA/mongoDB/models/user.model.js';
 import userRouter from './routes/users.router.js';
+import path from 'path';
 import mongoose from 'mongoose';
 
 const fileStorage = FileStore(session);
@@ -216,3 +217,4 @@ socketServer.on('connection', (socket) => {
   });
   
 });
+
